@@ -3,38 +3,6 @@
 on: workflow_dispatch
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-        with:
-          fetch-depth: 0 #otherwise MinVer shits itself
-          submodules: true #only the docs needs recursive
-      - uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '6.0.x'
-      - name: Restore Tools
-        shell: bash
-        run: |
-          dotnet tool restore
-      - name: Run the Cake script
-        uses: cake-build/cake-action@v1
-        with:
-          target: Release
-        env:
-          QUAY_TOKEN: ${{secrets.QUAY_TOKEN}}
-          QUAY_USER: project-sicario+github
-          NUGET_TOKEN: ${{secrets.NUGET_TOKEN}}
-      - uses: actions/upload-artifact@v4
-        name: Upload Server
-        with:
-          name: project-sicario-server
-          path: dist/publish/dotnet-any/ # limiting this for now because its huge
-      - uses: actions/upload-artifact@v4
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          name: build_archives
-          path: dist/archive/
   build-win:
     runs-on: windows-latest
     steps:
@@ -42,15 +10,16 @@ jobs:
         with:
           fetch-depth: 0 #again, MinVer needs it
           submodules: true
-      - uses: actions/setup-dotnet@v1
+      - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '6.0.x'
       - name: Restore Tools
         run: |
           dotnet tool restore
       - name: Run the Cake script
-        uses: cake-build/cake-action@v1
+        uses: cake-build/cake-action@v3
         with:
+          cake-version: 3.2.0
           target: Publish-Merger
       - uses: actions/upload-artifact@v4
         name: Upload Merger
