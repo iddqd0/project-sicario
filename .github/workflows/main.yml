@@ -1,18 +1,6 @@
 ﻿name: Project Sicario CI Build
 
-on:
-  push:
-    branches: [ main ]
-    paths-ignore:
-      - "docs/**"
-      - ".github/workflows/docs.yml"
-    tags:
-      - 'v*.*.*'
-  pull_request:
-    branches: [ main ]
-    paths-ignore:
-      - "docs/**"
-      - ".github/workflows/docs.yml"
+on: workflow_dispatch
 
 jobs:
   build:
